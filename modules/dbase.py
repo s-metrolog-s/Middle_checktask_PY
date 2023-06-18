@@ -19,7 +19,7 @@ def find_string(data_find: str) -> str:
     for key in my_dict:
         if key == data_find:
             result = my_dict.get(key)
-    log.save_log(f"Запрошен поиск {id}")
+    log.save_log(f"Запрошен поиск {data_find}")
     return result
 
 
@@ -29,3 +29,10 @@ def del_row(id):
     my_dict.pop(id)
     json_adapter.save_json(my_dict)
     log.save_log(f"Удалена заметка {id}")
+
+def make_list():
+    my_dict = json_adapter.open_json()
+    result = ""
+    for item in my_dict:
+        result += f"{item}: {my_dict[item].get('name')} от {my_dict[item].get('date')}\n"
+    return result
