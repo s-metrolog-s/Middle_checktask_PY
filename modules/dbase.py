@@ -36,4 +36,5 @@ def make_list(date):
     for item in my_dict:
         if my_dict[item].get("date") == date:
             result += f"{item}: {my_dict[item].get('name')} from {my_dict[item].get('date')} last edit {my_dict[item].get('time')}\n"
+    log.save_log(f"Вывод всех замето за {date}")
     return result
