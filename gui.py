@@ -60,7 +60,7 @@ def click_show_all():
     window_finder.protocol("WM_DELETE_WINDOW", lambda: dismiss(window_finder))
     result = tk.Text(master=window_finder, width=100, height=20)
     result.pack()
-    result.replace("1.0", tk.END, dbase.make_list())
+    result.replace("1.0", tk.END, dbase.make_list(ent_find_all.get()))
     close_button = tk.Button(window_finder, text="Закрыть окно", command=lambda: dismiss(window_finder))
     close_button.pack(anchor="s", expand=1)
     window_finder.grab_set()
@@ -91,15 +91,18 @@ window = tk.Tk()
 window.title('Заметки v0.1b')
 window.geometry("500x600")
 window.resizable(False, False)
-# Копируем имя пути к папке программы
+
+# Проверка нумерации заметок и возврат последнего индекса
+idf.id_generator()
+idf.refresh_id()
 idf.id_generator()
 
 #-----------Форма общая-------------#
 frm_form = tk.Frame(relief=tk.SUNKEN, borderwidth=1)
 frm_form.pack(expand=True,
-              fill='x',
-              padx=3,
-              pady=3)
+              fill=tk.X,
+              padx=1,
+              pady=1)
 
 # Внесение ID
 lbl_id = tk.Label(master=frm_form, text='ID', font=('Calibri', 16))
@@ -134,16 +137,16 @@ ent_time_out.grid(row=1, column=2)
 #-----------Форма для названия заметки-------------#
 frm_form_name = tk.Frame(relief=tk.SUNKEN, borderwidth=1)
 frm_form_name.pack(expand=True,
-                   fill='x',
-                   padx=3,
-                   pady=3)
+                   fill=tk.X,
+                   padx=1,
+                   pady=1)
 
 #-----------Внесение заголовка-------------#
 lbl_name = tk.Label(master=frm_form_name, text='Заголовок', font=('Calibri', 16))
 ent_name_input = tk.Entry(master=frm_form_name)
 lbl_name.grid(row=0, column=0)
 ent_name_input.grid(row=1, column=0)
-ent_name_input.configure(width=70)
+ent_name_input.configure(width=85)
 #----------------------------------------------#
 
 
@@ -156,9 +159,9 @@ frm_form_body.pack(expand=True,
 
 # Тело заметки
 lbl_body = tk.Label(master=frm_form_body, text='Текст заметки', font=('Calibri', 16))
-txt_body_input = tk.Text(master=frm_form_body, width=50, height=10)
+txt_body_input = tk.Text(master=frm_form_body, width=59, height=12)
 lbl_body.grid(row=0, column=0)
-txt_body_input.grid(row=1, column=0, ipadx=5, ipady=5, sticky='nswe')
+txt_body_input.grid(row=1, column=0, ipadx=5, ipady=5)
 
 btn_clear = tk.Button(master=frm_form_body, text='Очистить текст', command=click_clear)
 btn_clear.grid(row=2, column=0, padx=5, pady=5, sticky='w')
@@ -171,13 +174,10 @@ frm_buttons = tk.Frame()
 frm_buttons.pack(fill=tk.X, ipadx=5, ipady=5)
 
 btn_save = tk.Button(master=frm_buttons, text='Сохранить заметку', command=click_save)
-btn_save.pack(side=tk.LEFT, padx=10, ipadx=10)
+btn_save.grid(ipadx=10, ipady=10, padx=5, pady=5, row=0, column=0)
 
-btn_save = tk.Button(master=frm_buttons, text='Вывести все', command=click_show_all)
-btn_save.pack(side=tk.LEFT, padx=10, ipadx=10)
-
-btn_save = tk.Button(master=frm_buttons, text='Удалить заметку', command=click_del)
-btn_save.pack(side=tk.LEFT, padx=10, ipadx=10)
+btn_del = tk.Button(master=frm_buttons, text='Удалить заметку', command=click_del)
+btn_del.grid(ipadx=10, ipady=10, padx=5, pady=5, row=0, column=1)
 
 #----------------------------------------------#
 
@@ -185,23 +185,34 @@ btn_save.pack(side=tk.LEFT, padx=10, ipadx=10)
 frm_find = tk.Frame(relief=tk.GROOVE, borderwidth=1)
 frm_find.pack(fill=tk.X, ipadx=5, ipady=5)
 
-lbl_text_in = tk.Label(master=frm_find, text='Введите ключение слова или ID для поиска:', font=('Calibri', 12))
-lbl_text_in.grid(row=0, column=0, sticky='e')
+lbl_text_in = tk.Label(master=frm_find, text='Поиск заметки по ID:', font=('Calibri', 12))
+lbl_text_in.grid(row=0, column=0, sticky='w')
 
 ent_find = tk.Entry(master=frm_find, width=30)
-ent_find.grid(row=1, column=0)
+ent_find.grid(row=0, column=1)
 
-btn_find = tk.Button(master=frm_find, text='Поиск', command=click_find, height=3, width=20)
-btn_find.grid(row=0, column=1, columnspan=3, rowspan=3, pady=3, padx=3)
+btn_find = tk.Button(master=frm_find, text='Поиск', command=click_find, height=1, width=20)
+btn_find.grid(row=0, column=2)
+
+lbl_text_in_all = tk.Label(master=frm_find, text='Поиск заметок по дате:', font=('Calibri', 12))
+lbl_text_in_all.grid(row=1, column=0, sticky='w')
+
+ent_find_all = tk.Entry(master=frm_find, width=30)
+ent_find_all.insert(0, get_date())
+ent_find_all.grid(row=1, column=1)
+
+btn_find_date = tk.Button(master=frm_find, text='Поиск по дате', command=click_show_all, height=1, width=20)
+btn_find_date.grid(row=1, column=2)
 
 # Рамка сохранения
 frm_data = tk.Frame()
 frm_data.pack(fill=tk.X)
 
-lbl_data_adress = tk.Label(master=frm_data, text='Путь к файлу: ', font=('Colibri', 12))
-lbl_data_adress.grid(row=0, column=0, sticky='w')
+lbl_data_adress = tk.Label(master=frm_data, text='Путь к файлу: ', font=('Colibri', 10))
+lbl_data_adress.grid(row=0, column=0, sticky='e')
 
 ent_data = tk.Entry(master=frm_data, width=40)
+ent_data.insert(0, idf.config.FILEPATH)
 ent_data.grid(row=0, column=1)
 
 refesh_head()
