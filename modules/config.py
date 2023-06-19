@@ -1,4 +1,5 @@
 from pathlib import Path
 
-FILEPATH = Path.cwd()
+FILEPATH = f'{Path.cwd()}\data\data.json'
+DIRPATH = Path.cwd()
 LASTINDEX = 0
