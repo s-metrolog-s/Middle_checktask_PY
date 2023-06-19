@@ -1,9 +1,11 @@
 import tkinter as tk
 from tkinter.messagebox import showinfo
+from tkinter import filedialog
 from datetime import *
 
 from modules import dbase
 from modules import id_functions as idf
+from modules import logger as log
 
 def click_save():
     result_str = {"name": ent_name_input.get(),
@@ -29,6 +31,8 @@ def click_find():
             ent_time_out.insert("0", result.get("time"))
         else:
             showinfo(title="Результат поиска", message="Запись не найдена")
+    else:
+        showinfo(title="Результат поиска", message="Введите ID для поиска")
 
 def click_del():
     dbase.del_row(ent_id_out.get())
@@ -53,18 +57,31 @@ def dismiss(window):
     window.destroy()
 
 def click_show_all():
-    window_finder = tk.Toplevel()
-    window_finder.title("Список всех заметок в базе данных")
-    window_finder.geometry("400x400")
-    window_finder.resizable(False, False)
-    window_finder.protocol("WM_DELETE_WINDOW", lambda: dismiss(window_finder))
-    result = tk.Text(master=window_finder, width=100, height=20)
-    result.pack()
-    result.replace("1.0", tk.END, dbase.make_list(ent_find_all.get()))
-    close_button = tk.Button(window_finder, text="Закрыть окно", command=lambda: dismiss(window_finder))
-    close_button.pack(anchor="s", expand=1)
-    window_finder.grab_set()
+    if ent_find_all.get() != "":
+        window_finder = tk.Toplevel()
+        window_finder.title("Список всех заметок в базе данных")
+        window_finder.geometry("400x400")
+        window_finder.resizable(False, False)
+        window_finder.protocol("WM_DELETE_WINDOW", lambda: dismiss(window_finder))
+        result = tk.Text(master=window_finder, width=100, height=20)
+        result.pack()
+        result.replace("1.0", tk.END, dbase.make_list(ent_find_all.get()))
+        close_button = tk.Button(window_finder, text="Закрыть окно", command=lambda: dismiss(window_finder))
+        close_button.pack(anchor="s", expand=1)
+        window_finder.grab_set()
+    else:
+        showinfo(title="Результат поиска", message="Введите дату для поиска")
 
+def click_open_file():
+    open_file = tk.filedialog
+    ent_data.delete(0, tk.END)
+    new_path = open_file.askopenfilename()
+    ent_data.insert(0, new_path)
+    idf.config.FILEPATH = new_path
+    idf.id_generator()
+    idf.refresh_id()
+    refesh_head()
+    log.save_log(f"Открыта новая база данных, путь: {new_path}")
 def none_empty_fields():
     if ent_name_input.get() == "" or txt_body_input.get("1.0", tk.END) == "\n":
         showinfo(title="Найдены пустые поля", message="Заполните поля Заголовок и Текст")
@@ -80,8 +97,11 @@ def get_time():
 
 def refesh_head():
     idf.id_generator()
+    ent_id_out.delete(0, tk.END)
     ent_id_out.insert(0, idf.get_new_id())
+    ent_date_out.delete(0, tk.END)
     ent_date_out.insert(0, get_date())
+    ent_time_out.delete(0, tk.END)
     ent_time_out.insert(0, get_time())
 
 
@@ -110,7 +130,7 @@ lbl_id.columnconfigure(index=0, weight=1)
 lbl_id.rowconfigure(index=0, weight=1)
 lbl_id.grid(row=0, column=0)
 
-ent_id_out = tk.Entry(master=frm_form, font=('Calibri', 12))
+ent_id_out = tk.Entry(master=frm_form, font=('Calibri', 12), justify=tk.CENTER)
 ent_id_out.grid(row=1, column=0)
 
 # Дата
@@ -119,7 +139,7 @@ lbl_date.columnconfigure(index=1, weight=1)
 lbl_date.rowconfigure(index=1, weight=1)
 lbl_date.grid(row=0, column=1)
 
-ent_date_out = tk.Entry(master=frm_form, font=('Calibri', 12))
+ent_date_out = tk.Entry(master=frm_form, font=('Calibri', 12), justify=tk.CENTER)
 ent_date_out.grid(row=1, column=1)
 
 # Время
@@ -128,7 +148,7 @@ lbl_time.columnconfigure(index=2, weight=1)
 lbl_time.rowconfigure(index=2, weight=1)
 lbl_time.grid(row=0, column=2)
 
-ent_time_out = tk.Entry(master=frm_form, font=('Calibri', 12))
+ent_time_out = tk.Entry(master=frm_form, font=('Calibri', 12), justify=tk.CENTER)
 ent_time_out.grid(row=1, column=2)
 
 #--------------------------------------------------#
@@ -214,6 +234,9 @@ lbl_data_adress.grid(row=0, column=0, sticky='e')
 ent_data = tk.Entry(master=frm_data, width=40)
 ent_data.insert(0, idf.config.FILEPATH)
 ent_data.grid(row=0, column=1)
+
+btn_open_file = tk.Button(master=frm_data, text='Открыть файл', command=click_open_file, height=1, width=22)
+btn_open_file.grid(row=0, column=2)
 
 refesh_head()
 window.mainloop()
