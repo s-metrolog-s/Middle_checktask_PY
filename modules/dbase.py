@@ -30,9 +30,10 @@ def del_row(id):
     json_adapter.save_json(my_dict)
     log.save_log(f"Удалена заметка {id}")
 
-def make_list():
+def make_list(date):
     my_dict = json_adapter.open_json()
     result = ""
     for item in my_dict:
-        result += f"{item}: {my_dict[item].get('name')} от {my_dict[item].get('date')}\n"
+        if my_dict[item].get("date") == date:
+            result += f"{item}: {my_dict[item].get('name')} from {my_dict[item].get('date')} last edit {my_dict[item].get('time')}\n"
     return result
