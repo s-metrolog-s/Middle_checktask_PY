@@ -57,20 +57,17 @@ def dismiss(window):
     window.destroy()
 
 def click_show_all():
-    if ent_find_all.get() != "":
-        window_finder = tk.Toplevel()
-        window_finder.title("Список всех заметок в базе данных")
-        window_finder.geometry("400x400")
-        window_finder.resizable(False, False)
-        window_finder.protocol("WM_DELETE_WINDOW", lambda: dismiss(window_finder))
-        result = tk.Text(master=window_finder, width=100, height=20)
-        result.pack()
-        result.replace("1.0", tk.END, dbase.make_list(ent_find_all.get()))
-        close_button = tk.Button(window_finder, text="Закрыть окно", command=lambda: dismiss(window_finder))
-        close_button.pack(anchor="s", expand=1)
-        window_finder.grab_set()
-    else:
-        showinfo(title="Результат поиска", message="Введите дату для поиска")
+    window_finder = tk.Toplevel()
+    window_finder.title("Список всех заметок в базе данных")
+    window_finder.geometry("400x400")
+    window_finder.resizable(False, False)
+    window_finder.protocol("WM_DELETE_WINDOW", lambda: dismiss(window_finder))
+    result = tk.Text(master=window_finder, width=100, height=20)
+    result.pack()
+    result.replace("1.0", tk.END, dbase.make_list(ent_find_all.get()))
+    close_button = tk.Button(window_finder, text="Закрыть окно", command=lambda: dismiss(window_finder))
+    close_button.pack(anchor="s", expand=1)
+    window_finder.grab_set()
 
 def click_open_file():
     open_file = tk.filedialog

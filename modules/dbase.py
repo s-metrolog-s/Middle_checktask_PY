@@ -34,7 +34,7 @@ def make_list(date):
     my_dict = json_adapter.open_json()
     result = ""
     for item in my_dict:
-        if my_dict[item].get("date") == date:
+        if (my_dict[item].get("date") == date) or (date == ""):
             result += f"{item}: {my_dict[item].get('name')} from {my_dict[item].get('date')} last edit {my_dict[item].get('time')}\n"
     log.save_log(f"Вывод всех замето за {date}")
     return result
